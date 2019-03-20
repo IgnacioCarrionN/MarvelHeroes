@@ -56,6 +56,11 @@ dependencies {
     implementation "com.squareup.retrofit2:converter-gson:$retrofit_version"
     implementation "com.squareup.okhttp3:logging-interceptor:$okhttp_logging"
 
+    // Glide
+    def glide_version = "4.9.0"
+    implementation "com.github.bumptech.glide:glide:$glide_version"
+    kapt "com.github.bumptech.glide:compiler:$glide_version"
+
 
     // Room
     def room_version = "2.1.0-alpha05"

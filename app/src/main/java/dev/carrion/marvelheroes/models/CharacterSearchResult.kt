@@ -4,6 +4,6 @@ import androidx.lifecycle.LiveData
 import androidx.paging.PagedList
 
 data class CharacterSearchResult(
-    val data: LiveData<PagedList<Character>>,
+    val data: LiveData<PagedList<CharacterDatabase>>,
     val networkErrors: LiveData<String>
 )

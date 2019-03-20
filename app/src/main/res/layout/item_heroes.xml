@@ -1,12 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:orientation="vertical"
-              android:layout_width="match_parent"
-              android:layout_height="wrap_content">
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                                                   xmlns:app="http://schemas.android.com/apk/res-auto"
+                                                   xmlns:tools="http://schemas.android.com/tools"
+                                                   android:layout_width="match_parent"
+                                                   android:layout_height="wrap_content" android:weightSum="10">
 
+    <ImageView
+            android:layout_width="75dp"
+            android:layout_height="75dp" android:id="@+id/imgThumbnail"
+            app:layout_constraintStart_toStartOf="parent"
+            android:layout_marginLeft="8dp" android:layout_marginStart="8dp" android:layout_marginTop="8dp"
+            app:layout_constraintTop_toTopOf="parent" android:layout_marginBottom="8dp"
+            app:layout_constraintBottom_toBottomOf="parent"/>
     <TextView
-            android:text="TextView"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" android:id="@+id/txtName" android:layout_marginLeft="24dp"
-            android:layout_marginRight="24dp" android:layout_marginTop="16dp" android:layout_marginBottom="16dp"/>
-</LinearLayout>
+            android:layout_width="0dp"
+            android:layout_height="wrap_content" android:id="@+id/txtName"
+            android:layout_marginTop="8dp"
+            app:layout_constraintTop_toTopOf="parent" app:layout_constraintStart_toEndOf="@+id/imgThumbnail"
+            android:layout_marginLeft="8dp" android:layout_marginStart="8dp" app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginEnd="8dp" android:layout_marginRight="8dp" tools:text="Spider-Man"/>
+    <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content" android:id="@+id/txtDescription"
+            app:layout_constraintStart_toEndOf="@+id/imgThumbnail"
+            android:layout_marginLeft="8dp" android:layout_marginStart="8dp" android:layout_marginTop="8dp"
+            app:layout_constraintTop_toBottomOf="@+id/txtName" app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginEnd="8dp" android:layout_marginRight="8dp"
+            tools:text="Bitten by a radioactive spider, high school student Peter Parker gained the speed, strength and powers of a spider. Adopting the name Spider-Man, Peter hoped to start a career using his new abilities. Taught that with great power comes great responsibility, Spidey has vowed to use his powers to help people."
+            android:layout_marginBottom="8dp" app:layout_constraintBottom_toBottomOf="parent"/>
+</androidx.constraintlayout.widget.ConstraintLayout>

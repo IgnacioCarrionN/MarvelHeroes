@@ -3,11 +3,13 @@ package dev.carrion.marvelheroes
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.Observer
 import androidx.lifecycle.Transformations
 import androidx.lifecycle.ViewModel
 import androidx.paging.PagedList
 import dev.carrion.marvelheroes.data.MarvelRepository
 import dev.carrion.marvelheroes.models.Character
+import dev.carrion.marvelheroes.models.CharacterDatabase
 import dev.carrion.marvelheroes.models.CharacterSearchResult
 
 class MarvelViewModel(private val repository: MarvelRepository) : ViewModel() {
@@ -20,12 +22,18 @@ class MarvelViewModel(private val repository: MarvelRepository) : ViewModel() {
         repository.searchCharacters(it)
     }
 
-    val characterList: LiveData<PagedList<Character>> = Transformations.switchMap(characterResult) { it.data }
+    var characterList: LiveData<PagedList<CharacterDatabase>> = Transformations.switchMap(characterResult) {
+        Log.d("ViewModel", "Character List LiveData ${it.data.hasActiveObservers()}")
+        it.data
+    }
 
     val networkErrors: LiveData<String> = Transformations.switchMap(characterResult) { it.networkErrors}
 
     init {
         searchCharacters(null)
+        characterList.observeForever {
+            Log.d("ViewModel", "List size on observer: ${it.size}")
+        }
     }
 
     fun searchCharacters(nameString: String?){

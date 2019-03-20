@@ -1,17 +1,18 @@
 package dev.carrion.marvelheroes.mainlist
 
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.paging.PagedListAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
+import dev.carrion.marvelheroes.GlideApp
 import dev.carrion.marvelheroes.R
-import dev.carrion.marvelheroes.models.Character
+import dev.carrion.marvelheroes.models.CharacterDatabase
 
-class CharactersAdapter : PagedListAdapter<Character, RecyclerView.ViewHolder>(REPO_COMPARATOR){
+class CharactersAdapter : PagedListAdapter<CharacterDatabase, RecyclerView.ViewHolder>(REPO_COMPARATOR){
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return CharacterViewHolder.create(parent)
     }
@@ -34,27 +35,37 @@ class CharactersAdapter : PagedListAdapter<Character, RecyclerView.ViewHolder>(R
 
 
     companion object {
-        private val REPO_COMPARATOR = object : DiffUtil.ItemCallback<Character>() {
-            override fun areItemsTheSame(oldItem: Character, newItem: Character): Boolean =
+        private val REPO_COMPARATOR = object : DiffUtil.ItemCallback<CharacterDatabase>() {
+            override fun areItemsTheSame(oldItem: CharacterDatabase, newItem: CharacterDatabase): Boolean =
                 oldItem.id == newItem.id
 
-            override fun areContentsTheSame(oldItem: Character, newItem: Character): Boolean =
+            override fun areContentsTheSame(oldItem: CharacterDatabase, newItem: CharacterDatabase): Boolean =
                 oldItem == newItem
         }
     }
 
 }
 
-class CharacterViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+class CharacterViewHolder(val view: View) : RecyclerView.ViewHolder(view) {
+
+    private val thumbnail: ImageView = view.findViewById(R.id.imgThumbnail)
 
     private val name: TextView = view.findViewById(R.id.txtName)
+    private val description: TextView = view.findViewById(R.id.txtDescription)
 
-    fun bind(character: Character?){
+
+    fun bind(character: CharacterDatabase?){
         if(character == null){
             val resources = itemView.resources
             name.text = resources.getString(R.string.loading)
         }else{
+            GlideApp.with(view)
+                .load(character.thumbnail.path)
+                .fitCenter()
+                .into(thumbnail)
+
             name.text = character.name
+            description.text = character.description
         }
     }
 
