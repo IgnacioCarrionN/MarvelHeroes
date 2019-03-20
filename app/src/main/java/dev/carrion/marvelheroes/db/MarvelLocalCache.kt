@@ -1,11 +1,14 @@
 package dev.carrion.marvelheroes.db
 
 import android.provider.ContactsContract
+import android.util.EventLog
 import android.util.Log
+import androidx.lifecycle.LiveData
 import androidx.paging.DataSource
 import dev.carrion.marvelheroes.models.Character
 import dev.carrion.marvelheroes.models.CharacterDatabase
 import dev.carrion.marvelheroes.models.ComicSummary
+import dev.carrion.marvelheroes.models.EventSummary
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -46,12 +49,29 @@ class MarvelLocalCache(private val marvelDao: MarvelDao) : CoroutineScope {
         }
     }
 
+    fun getComicsForCharacter(id: Int): LiveData<List<ComicSummary>> = marvelDao.getComicsForCharacter(id)
+
+    fun insertEvents(events: List<EventSummary>, insertFinished: () -> Unit) {
+        if(events.isNotEmpty()){
+            launch {
+                marvelDao.insertEvents(events)
+                insertFinished()
+            }
+        }
+    }
+
+    fun getEventsForCharacter(id: Int): LiveData<List<EventSummary>> = marvelDao.getEventsForCharacter(id)
+
     fun clearCharacterTable() = launch {
         marvelDao.clearCharactersTable()
     }
 
     fun clearComicsTable() = launch {
         marvelDao.clearComicsTable()
+    }
+
+    fun clearEventsTable() = launch {
+        marvelDao.clearEventsTable()
     }
 
 }

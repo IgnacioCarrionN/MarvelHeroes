@@ -4,8 +4,9 @@ import android.content.Context
 import androidx.room.*
 import dev.carrion.marvelheroes.models.CharacterDatabase
 import dev.carrion.marvelheroes.models.ComicSummary
+import dev.carrion.marvelheroes.models.EventSummary
 
-@Database(entities = [CharacterDatabase::class, ComicSummary::class], version = 3, exportSchema = false)
+@Database(entities = [CharacterDatabase::class, ComicSummary::class, EventSummary::class], version = 4, exportSchema = false)
 @TypeConverters(Converters::class)
 abstract class MarvelDatabase  : RoomDatabase(){
 

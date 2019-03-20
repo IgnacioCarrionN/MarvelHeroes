@@ -7,6 +7,8 @@ import androidx.paging.PagedList
 import dev.carrion.marvelheroes.db.MarvelLocalCache
 import dev.carrion.marvelheroes.models.Character
 import dev.carrion.marvelheroes.models.CharacterDatabase
+import dev.carrion.marvelheroes.models.ComicSummary
+import dev.carrion.marvelheroes.models.EventSummary
 import dev.carrion.marvelheroes.network.MarvelApi
 import dev.carrion.marvelheroes.network.fetchCharacters
 
@@ -43,7 +45,7 @@ class MarvelCallback(private val name: String?,
         fetchCharacters(api, name, startPosition, NETWORK_PAGE_SIZE, { characterDataWrapper ->
             val charactersDatabase = characterListToDatabaseList(characterDataWrapper.data.results)
             cache.insertCharacters(charactersDatabase) {
-                saveComics(characterDataWrapper.data.results)
+                saveComicsAndEvents(characterDataWrapper.data.results)
             }
         }, { error ->
             Log.d("MarvelDataSource", error)
@@ -61,13 +63,37 @@ class MarvelCallback(private val name: String?,
         return charactersDatabase
     }
 
-    private fun saveComics(characters: List<Character>){
+
+    private fun saveComicsAndEvents(characters: List<Character>){
         characters.forEach {
-            cache.insertComics(it.comics.items){}
+            cache.insertComics(getComicListWithId(it.comics.items, it.id)){}
+            cache.insertEvents(getEventListWithId(it.events.items, it.id)){}
         }
         lastRequestedPage++
         isRequestInProgress = false
     }
+
+    private fun getComicListWithId(comics: List<ComicSummary>, characterId: Int): List<ComicSummary> {
+        val comicsWithId = mutableListOf<ComicSummary>()
+        comics.forEach {
+            comicsWithId.add(setComicCharacterId(it, characterId))
+        }
+        return comicsWithId
+    }
+
+    private fun setComicCharacterId(comic: ComicSummary, characterId: Int): ComicSummary =
+        ComicSummary(0, comic.resourceURI, comic.name, characterId)
+
+    private fun getEventListWithId(events: List<EventSummary>, characterId: Int): List<EventSummary> {
+        val eventsWithId = mutableListOf<EventSummary>()
+        events.forEach {
+            eventsWithId.add(setEventCharacterId(it, characterId))
+        }
+        return eventsWithId
+    }
+
+    private fun setEventCharacterId(event: EventSummary, characterId: Int): EventSummary =
+        EventSummary(0, event.resourceURI, event.name, characterId)
 
     companion object {
         private const val NETWORK_PAGE_SIZE = 50

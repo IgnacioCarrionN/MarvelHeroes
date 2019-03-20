@@ -11,21 +11,24 @@ import android.widget.EditText
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
+import androidx.navigation.Navigation
+import androidx.navigation.fragment.findNavController
 import androidx.paging.PagedList
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import dev.carrion.marvelheroes.MarvelViewModel
 import dev.carrion.marvelheroes.R
+import dev.carrion.marvelheroes.characterdetails.comicslist.ComicListFragment
 import dev.carrion.marvelheroes.models.Character
 import dev.carrion.marvelheroes.models.CharacterDatabase
 import org.koin.android.viewmodel.ext.android.viewModel
 
-class CharactersListFragment : Fragment() {
+class CharactersListFragment : Fragment(), CharacterViewHolder.OnAdapterInteractions {
 
     private val model : MarvelViewModel by viewModel()
 
-    private val adapter = CharactersAdapter()
+    private val adapter = CharactersAdapter(this)
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.fragment_characters_list, container, false)
@@ -71,6 +74,13 @@ class CharactersListFragment : Fragment() {
                 }
             }
             false
+        }
+    }
+
+    override fun onItemClicked(id: Int) {
+        activity?.let {
+            val action = CharactersListFragmentDirections.actionCharactersListFragmentToCharacterDetailsFragment(id)
+            findNavController().navigate(action)
         }
     }
 }

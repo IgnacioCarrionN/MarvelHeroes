@@ -1,6 +1,8 @@
 package dev.carrion.marvelheroes.di
 
 import dev.carrion.marvelheroes.MarvelViewModel
+import dev.carrion.marvelheroes.characterdetails.comicslist.ComicListViewModel
+import dev.carrion.marvelheroes.characterdetails.eventslist.EventListViewModel
 import dev.carrion.marvelheroes.data.MarvelRepository
 import dev.carrion.marvelheroes.db.MarvelDao
 import dev.carrion.marvelheroes.db.MarvelDatabase
@@ -14,11 +16,17 @@ val MarvelModule = module {
 
     single { MarvelApi.create() }
 
-    bean { MarvelDatabase.getInstance(androidContext()).marvelDao()}
+    single { MarvelDatabase.getInstance(androidContext()).marvelDao()}
 
     single { MarvelLocalCache(get())}
 
     single { MarvelRepository(get(), get()) }
 
+
     viewModel { MarvelViewModel(get()) }
+
+    viewModel { ComicListViewModel(get(), getProperty("id")) }
+
+    viewModel { EventListViewModel(get(), getProperty("id")) }
+
 }

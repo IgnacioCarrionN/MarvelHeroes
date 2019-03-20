@@ -12,9 +12,9 @@ import dev.carrion.marvelheroes.GlideApp
 import dev.carrion.marvelheroes.R
 import dev.carrion.marvelheroes.models.CharacterDatabase
 
-class CharactersAdapter : PagedListAdapter<CharacterDatabase, RecyclerView.ViewHolder>(REPO_COMPARATOR){
+class CharactersAdapter(val handler: CharacterViewHolder.OnAdapterInteractions) : PagedListAdapter<CharacterDatabase, RecyclerView.ViewHolder>(REPO_COMPARATOR){
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
-        return CharacterViewHolder.create(parent)
+        return CharacterViewHolder.create(parent, handler)
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
@@ -45,13 +45,22 @@ class CharactersAdapter : PagedListAdapter<CharacterDatabase, RecyclerView.ViewH
     }
 
 }
-
-class CharacterViewHolder(val view: View) : RecyclerView.ViewHolder(view) {
+class CharacterViewHolder(private val view: View, private val handler: OnAdapterInteractions) : RecyclerView.ViewHolder(view) {
 
     private val thumbnail: ImageView = view.findViewById(R.id.imgThumbnail)
 
     private val name: TextView = view.findViewById(R.id.txtName)
     private val description: TextView = view.findViewById(R.id.txtDescription)
+
+    private var character: CharacterDatabase? = null
+
+    init {
+        view.setOnClickListener {
+            character?.id?.let {
+                handler.onItemClicked(it)
+            }
+        }
+    }
 
 
     fun bind(character: CharacterDatabase?){
@@ -59,6 +68,9 @@ class CharacterViewHolder(val view: View) : RecyclerView.ViewHolder(view) {
             val resources = itemView.resources
             name.text = resources.getString(R.string.loading)
         }else{
+
+            this.character = character
+
             GlideApp.with(view)
                 .load(character.thumbnail.path)
                 .fitCenter()
@@ -69,11 +81,15 @@ class CharacterViewHolder(val view: View) : RecyclerView.ViewHolder(view) {
         }
     }
 
-    companion object {
-        fun create(parent: ViewGroup): CharacterViewHolder {
-            val view = LayoutInflater.from(parent.context).inflate(R.layout.item_heroes, parent, false)
-            return CharacterViewHolder(view)
-        }
+    interface OnAdapterInteractions {
+        fun onItemClicked(id: Int)
     }
 
+    companion object {
+        fun create(parent: ViewGroup, handler: OnAdapterInteractions): CharacterViewHolder {
+            val view = LayoutInflater.from(parent.context).inflate(R.layout.item_heroes, parent, false)
+            return CharacterViewHolder(view, handler)
+        }
+    }
 }
+
