@@ -62,6 +62,8 @@ class MarvelLocalCache(private val marvelDao: MarvelDao) : CoroutineScope {
 
     fun getEventsForCharacter(id: Int): LiveData<List<EventSummary>> = marvelDao.getEventsForCharacter(id)
 
+    fun getCharacterDetails(id: Int): LiveData<CharacterDatabase> = marvelDao.getCharacterById(id)
+
     fun clearCharacterTable() = launch {
         marvelDao.clearCharactersTable()
     }
@@ -73,5 +75,6 @@ class MarvelLocalCache(private val marvelDao: MarvelDao) : CoroutineScope {
     fun clearEventsTable() = launch {
         marvelDao.clearEventsTable()
     }
+
 
 }

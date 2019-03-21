@@ -5,5 +5,6 @@ import androidx.paging.PagedList
 
 data class CharacterSearchResult(
     val data: LiveData<PagedList<CharacterDatabase>>,
-    val networkErrors: LiveData<String>
+    val networkErrors: LiveData<String>,
+    val loading: LiveData<Boolean>
 )

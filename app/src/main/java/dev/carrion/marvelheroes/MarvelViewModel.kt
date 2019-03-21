@@ -27,6 +27,8 @@ class MarvelViewModel(private val repository: MarvelRepository) : ViewModel() {
 
     val networkErrors: LiveData<String> = Transformations.switchMap(characterResult) { it.networkErrors}
 
+    val loading: LiveData<Boolean> = Transformations.switchMap(characterResult) { it.loading }
+
     init {
         searchCharacters(null)
         characterList.observeForever {

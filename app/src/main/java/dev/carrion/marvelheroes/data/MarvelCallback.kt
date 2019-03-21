@@ -20,6 +20,8 @@ class MarvelCallback(private val name: String?,
 
     private var isRequestInProgress = false
 
+    val loading: MutableLiveData<Boolean> = MutableLiveData()
+
     private val _networkErrors = MutableLiveData<String>()
 
     val networkErrors: LiveData<String>
@@ -27,6 +29,7 @@ class MarvelCallback(private val name: String?,
 
     override fun onZeroItemsLoaded() {
         Log.d("Callback", "onZeroItemsLoaded")
+        loading.postValue(true)
         requestAndSaveData(name)
     }
 
@@ -39,17 +42,18 @@ class MarvelCallback(private val name: String?,
         if(isRequestInProgress) return
 
         isRequestInProgress = true
-
         val startPosition = lastRequestedPage * NETWORK_PAGE_SIZE
 
         fetchCharacters(api, name, startPosition, NETWORK_PAGE_SIZE, { characterDataWrapper ->
             val charactersDatabase = characterListToDatabaseList(characterDataWrapper.data.results)
             cache.insertCharacters(charactersDatabase) {
                 saveComicsAndEvents(characterDataWrapper.data.results)
+                loading.postValue(false)
             }
         }, { error ->
             Log.d("MarvelDataSource", error)
             isRequestInProgress = false
+            loading.postValue(false)
             _networkErrors.postValue(error)
             requestAndSaveData(name)
         })

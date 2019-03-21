@@ -22,6 +22,7 @@ import dev.carrion.marvelheroes.R
 import dev.carrion.marvelheroes.characterdetails.comicslist.ComicListFragment
 import dev.carrion.marvelheroes.models.Character
 import dev.carrion.marvelheroes.models.CharacterDatabase
+import kotlinx.android.synthetic.main.activity_main.*
 import org.koin.android.viewmodel.ext.android.viewModel
 
 class CharactersListFragment : Fragment(), CharacterViewHolder.OnAdapterInteractions {
@@ -29,6 +30,7 @@ class CharactersListFragment : Fragment(), CharacterViewHolder.OnAdapterInteract
     private val model : MarvelViewModel by viewModel()
 
     private val adapter = CharactersAdapter(this)
+
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.fragment_characters_list, container, false)
@@ -45,6 +47,10 @@ class CharactersListFragment : Fragment(), CharacterViewHolder.OnAdapterInteract
         layoutManager.orientation = RecyclerView.VERTICAL
         recycler.layoutManager = layoutManager
 
+        // Loading dialog
+        val loadingDialog: LoadingDialog? = context?.let { LoadingDialog(it) }
+
+
         recycler.adapter = adapter
         model.characterList.observe(this, Observer<PagedList<CharacterDatabase>> {
             Log.d("CharactersListFragment", "list size: ${it?.size}")
@@ -54,6 +60,15 @@ class CharactersListFragment : Fragment(), CharacterViewHolder.OnAdapterInteract
         model.networkErrors.observe(this, Observer<String> {
             Toast.makeText(context, "Error: $it", Toast.LENGTH_LONG).show()
         })
+
+        model.loading.observe(this, Observer {
+            if(it)
+                loadingDialog?.showDialog()
+            else
+                loadingDialog?.hideDialog()
+        })
+
+
 
         val etName: EditText = view.findViewById(R.id.etName)
         etName.setOnKeyListener { _, keyCode, event ->
@@ -70,7 +85,7 @@ class CharactersListFragment : Fragment(), CharacterViewHolder.OnAdapterInteract
             if(actionId == EditorInfo.IME_ACTION_GO){
                 if(etName.text.isNotEmpty()){
                     model.searchCharacters(etName.text.toString())
-                    adapter.notifyDataSetChanged()
+                    adapter.submitList(null)
                 }
             }
             false

@@ -8,16 +8,15 @@ import androidx.paging.DataSource
 import androidx.paging.LivePagedListBuilder
 import androidx.paging.PagedList
 import dev.carrion.marvelheroes.db.MarvelLocalCache
-import dev.carrion.marvelheroes.models.Character
-import dev.carrion.marvelheroes.models.CharacterSearchResult
-import dev.carrion.marvelheroes.models.ComicSummary
-import dev.carrion.marvelheroes.models.EventSummary
+import dev.carrion.marvelheroes.models.*
 import dev.carrion.marvelheroes.network.MarvelApi
 
 class MarvelRepository(
     private val marvelApi: MarvelApi,
     private val cache: MarvelLocalCache
 ){
+
+    val loading: MutableLiveData<Boolean> = MutableLiveData()
 
     fun searchCharacters(name: String?): CharacterSearchResult {
         Log.d("MarvelRepository", "New search: $name")
@@ -34,6 +33,7 @@ class MarvelRepository(
 
         val boundaryCallback = MarvelCallback(name, marvelApi, cache)
         val networkErrors = boundaryCallback.networkErrors
+        val loading = boundaryCallback.loading
 
         val pagedListConfig = createPagedConfig()
 
@@ -41,7 +41,7 @@ class MarvelRepository(
             .setBoundaryCallback(boundaryCallback)
             .build()
 
-        return CharacterSearchResult(data, networkErrors)
+        return CharacterSearchResult(data, networkErrors, loading)
     }
 
     private fun createPagedConfig() = PagedList.Config.Builder()
@@ -57,6 +57,8 @@ class MarvelRepository(
     fun searchComics(characterId: Int): LiveData<List<ComicSummary>> = cache.getComicsForCharacter(characterId)
 
     fun searchEvents(characterId: Int): LiveData<List<EventSummary>> = cache.getEventsForCharacter(characterId)
+
+    fun searchCharacterDetails(characterId: Int): LiveData<CharacterDatabase> = cache.getCharacterDetails(characterId)
 
     companion object {
         private const val PAGE_SIZE = 20

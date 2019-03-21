@@ -1,6 +1,7 @@
 package dev.carrion.marvelheroes.di
 
 import dev.carrion.marvelheroes.MarvelViewModel
+import dev.carrion.marvelheroes.characterdetails.CharacterDetailsViewModel
 import dev.carrion.marvelheroes.characterdetails.comicslist.ComicListViewModel
 import dev.carrion.marvelheroes.characterdetails.eventslist.EventListViewModel
 import dev.carrion.marvelheroes.data.MarvelRepository
@@ -24,6 +25,8 @@ val MarvelModule = module {
 
 
     viewModel { MarvelViewModel(get()) }
+
+    viewModel { CharacterDetailsViewModel(get(), getProperty("id")) }
 
     viewModel { ComicListViewModel(get(), getProperty("id")) }
 
