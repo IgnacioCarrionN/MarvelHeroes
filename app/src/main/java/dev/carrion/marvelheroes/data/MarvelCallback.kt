@@ -4,14 +4,23 @@ import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.paging.PagedList
-import dev.carrion.marvelheroes.db.MarvelLocalCache
+import dev.carrion.marvelheroes.data.db.MarvelLocalCache
 import dev.carrion.marvelheroes.models.Character
 import dev.carrion.marvelheroes.models.CharacterDatabase
 import dev.carrion.marvelheroes.models.ComicSummary
 import dev.carrion.marvelheroes.models.EventSummary
-import dev.carrion.marvelheroes.network.MarvelApi
-import dev.carrion.marvelheroes.network.fetchCharacters
+import dev.carrion.marvelheroes.data.network.MarvelApi
+import dev.carrion.marvelheroes.data.network.fetchCharacters
 
+/**
+ * Marvel Callback
+ *
+ * This class handles if it's needed to make a request to the remote data source and converts data to DB models.
+ *
+ * @property name Character name to search
+ * @property api MarvelApi instance to make remote calls.
+ * @property cache MarvelLocalCache instance to save data on local DB.
+ */
 class MarvelCallback(private val name: String?,
                      private val api: MarvelApi,
                      private val cache: MarvelLocalCache) : PagedList.BoundaryCallback<CharacterDatabase>() {
@@ -38,6 +47,11 @@ class MarvelCallback(private val name: String?,
         requestAndSaveData(name)
     }
 
+    /**
+     * Request data to the remote source and saves on DB
+     *
+     * @property name Character name for query search.
+     */
     private fun requestAndSaveData(name: String?){
         if(isRequestInProgress) return
 
@@ -59,6 +73,12 @@ class MarvelCallback(private val name: String?,
         })
     }
 
+    /**
+     * Converts from JSON Character to CharacterDatabase.
+     *
+     * @property characters List of Characters from JSON conversion.
+     * @return List of characters with DB model.
+     */
     private fun characterListToDatabaseList(characters: List<Character>): List<CharacterDatabase> {
         val charactersDatabase = mutableListOf<CharacterDatabase>()
         characters.forEach {
@@ -68,6 +88,10 @@ class MarvelCallback(private val name: String?,
     }
 
 
+    /**
+     * Saves comics and events on the DB.
+     * @property characters List of Characters from JSON conversion.
+     */
     private fun saveComicsAndEvents(characters: List<Character>){
         characters.forEach {
             cache.insertComics(getComicListWithId(it.comics.items, it.id)){}
@@ -77,6 +101,11 @@ class MarvelCallback(private val name: String?,
         isRequestInProgress = false
     }
 
+    /**
+     * Create new ComicSummary objects with CharacterId from Character JSON list.
+     * @property comics List of ComicSummary without character ids.
+     * @property characterId CharacterId to use as foreign key on DB.
+     */
     private fun getComicListWithId(comics: List<ComicSummary>, characterId: Int): List<ComicSummary> {
         val comicsWithId = mutableListOf<ComicSummary>()
         comics.forEach {
@@ -88,6 +117,11 @@ class MarvelCallback(private val name: String?,
     private fun setComicCharacterId(comic: ComicSummary, characterId: Int): ComicSummary =
         ComicSummary(0, comic.resourceURI, comic.name, characterId)
 
+    /**
+     * Create new EventSummary objects with CharacterId from Character JSON list.
+     * @property events List of EventSummary without character ids.
+     * @property characterId CharacterId to use as foreign key on DB.
+     */
     private fun getEventListWithId(events: List<EventSummary>, characterId: Int): List<EventSummary> {
         val eventsWithId = mutableListOf<EventSummary>()
         events.forEach {

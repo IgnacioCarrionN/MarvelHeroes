@@ -4,6 +4,14 @@ import androidx.room.Entity
 import androidx.room.Ignore
 import androidx.room.PrimaryKey
 
+/**
+ * File keeps character related models on the same place.
+ */
+
+
+/**
+ * CharacterDataWrapper model from Marvel API.
+ */
 data class CharacterDataWrapper(
     val code: Int,
     val status: String,
@@ -14,6 +22,9 @@ data class CharacterDataWrapper(
     val etag: String
 )
 
+/**
+ * CharacterDataContainer model from Marvel API.
+ */
 data class CharacterDataContainer(
     val offset: Int,
     val limit: Int,
@@ -22,7 +33,9 @@ data class CharacterDataContainer(
     val results: List<Character>
 )
 
-
+/**
+ * Character model from Marvel API.
+ */
 data class Character(
     val id: Int,
     val name: String,
@@ -36,10 +49,15 @@ data class Character(
     val events: EventList,
     val series: SeriesList
 )
-
+/**
+ * Url and Image model from Marvel API.
+ */
 data class Url(val type: String, val url: String)
 data class Image(val path: String, val extension: String)
 
+/**
+ * CharacterDatabase is the model used to store characters on database.
+ */
 @Entity(tableName = "characters")
 data class CharacterDatabase(
     @PrimaryKey
@@ -51,6 +69,9 @@ data class CharacterDatabase(
     val thumbnail: Image
 ){
     companion object {
+        /**
+         * Converts Character from Marvel API to a CharacterDatabase object.
+         */
         fun fromCharacter(c: Character): CharacterDatabase =
             CharacterDatabase(c.id, c.name, c.description, c.modified, c.resourceURI, c.thumbnail)
     }

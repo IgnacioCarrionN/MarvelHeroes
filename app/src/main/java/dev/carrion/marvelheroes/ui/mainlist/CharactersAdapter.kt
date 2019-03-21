@@ -1,4 +1,4 @@
-package dev.carrion.marvelheroes.mainlist
+package dev.carrion.marvelheroes.ui.mainlist
 
 import android.view.LayoutInflater
 import android.view.View
@@ -12,6 +12,10 @@ import dev.carrion.marvelheroes.GlideApp
 import dev.carrion.marvelheroes.R
 import dev.carrion.marvelheroes.models.CharacterDatabase
 
+/**
+ * Adapter for character list RecyclerView.
+ * Works with PagedListAdapter.
+ */
 class CharactersAdapter(val handler: CharacterViewHolder.OnAdapterInteractions) : PagedListAdapter<CharacterDatabase, RecyclerView.ViewHolder>(REPO_COMPARATOR){
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return CharacterViewHolder.create(parent, handler)
@@ -35,6 +39,9 @@ class CharactersAdapter(val handler: CharacterViewHolder.OnAdapterInteractions) 
 
 
     companion object {
+        /**
+         * Handles the DiffUtil callback to compare list on the RecyclerView and apply the changes.
+         */
         private val REPO_COMPARATOR = object : DiffUtil.ItemCallback<CharacterDatabase>() {
             override fun areItemsTheSame(oldItem: CharacterDatabase, newItem: CharacterDatabase): Boolean =
                 oldItem.id == newItem.id
@@ -45,6 +52,11 @@ class CharactersAdapter(val handler: CharacterViewHolder.OnAdapterInteractions) 
     }
 
 }
+
+/**
+ * ViewHolder for the CharactersAdapter.
+ * Handles binding data to the view and setting an OnClickListener on each item.
+ */
 class CharacterViewHolder(private val view: View, private val handler: OnAdapterInteractions) : RecyclerView.ViewHolder(view) {
 
     private val thumbnail: ImageView = view.findViewById(R.id.imgThumbnail)
@@ -81,11 +93,20 @@ class CharacterViewHolder(private val view: View, private val handler: OnAdapter
         }
     }
 
+    /**
+     * Interface to communicate with the parent fragment on item clicks.
+     */
     interface OnAdapterInteractions {
         fun onItemClicked(id: Int)
     }
 
     companion object {
+        /**
+         * Create a new ViewHolder.
+         * @property parent ViewGroup parent of this ViewHolder.
+         * @property handler OnAdapterInteractions implementation to handle item clicks.
+         * @return CharacterViewHolder instance.
+         */
         fun create(parent: ViewGroup, handler: OnAdapterInteractions): CharacterViewHolder {
             val view = LayoutInflater.from(parent.context).inflate(R.layout.item_heroes, parent, false)
             return CharacterViewHolder(view, handler)

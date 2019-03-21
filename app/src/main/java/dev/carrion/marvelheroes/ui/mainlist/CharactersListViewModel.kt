@@ -1,4 +1,4 @@
-package dev.carrion.marvelheroes
+package dev.carrion.marvelheroes.ui.mainlist
 
 import android.util.Log
 import androidx.lifecycle.LiveData
@@ -10,7 +10,14 @@ import dev.carrion.marvelheroes.data.MarvelRepository
 import dev.carrion.marvelheroes.models.CharacterDatabase
 import dev.carrion.marvelheroes.models.CharacterSearchResult
 
-class MarvelViewModel(private val repository: MarvelRepository) : ViewModel() {
+/**
+ * Character List ViewModel
+ *
+ * This class communicates with the repository and gets a CharacterSearchResult based on the query name.
+ *
+ * @property repository MarvelRepository instance
+ */
+class CharactersListViewModel(private val repository: MarvelRepository) : ViewModel() {
 
 
     private val nameLiveData = MutableLiveData<String?>()
@@ -29,17 +36,21 @@ class MarvelViewModel(private val repository: MarvelRepository) : ViewModel() {
 
     val loading: LiveData<Boolean> = Transformations.switchMap(characterResult) { it.loading }
 
+    /**
+     * When ViewModel it's created we search for null name to query all characters.
+     */
     init {
         searchCharacters(null)
-        characterList.observeForever {
-            Log.d("ViewModel", "List size on observer: ${it.size}")
-        }
     }
 
+    /**
+     * Function called from fragment to change nameLiveData value and trigger a search.
+     *
+     * @property nameString Character starts with this name.
+     */
     fun searchCharacters(nameString: String?){
         Log.d("ViewModel", "searchCharacters()")
         nameLiveData.postValue(nameString)
     }
 
-    fun lastNameValue(): String? = nameLiveData.value
 }

@@ -1,6 +1,7 @@
-package dev.carrion.marvelheroes.mainlist
+package dev.carrion.marvelheroes.ui.mainlist
 
 import android.os.Bundle
+import android.text.Editable
 import android.util.Log
 import android.view.KeyEvent
 import android.view.LayoutInflater
@@ -11,23 +12,25 @@ import android.widget.EditText
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
-import androidx.navigation.Navigation
 import androidx.navigation.fragment.findNavController
 import androidx.paging.PagedList
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import dev.carrion.marvelheroes.MarvelViewModel
 import dev.carrion.marvelheroes.R
-import dev.carrion.marvelheroes.characterdetails.comicslist.ComicListFragment
-import dev.carrion.marvelheroes.models.Character
 import dev.carrion.marvelheroes.models.CharacterDatabase
-import kotlinx.android.synthetic.main.activity_main.*
 import org.koin.android.viewmodel.ext.android.viewModel
 
+/**
+ * Characters List Fragment
+ *
+ * This class handles the logic of the CharactersListFragment.
+ *
+ * @author Ignacio Carrión
+ */
 class CharactersListFragment : Fragment(), CharacterViewHolder.OnAdapterInteractions {
 
-    private val model : MarvelViewModel by viewModel()
+    private val model : CharactersListViewModel by viewModel()
 
     private val adapter = CharactersAdapter(this)
 
@@ -39,19 +42,12 @@ class CharactersListFragment : Fragment(), CharacterViewHolder.OnAdapterInteract
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val recycler: RecyclerView = view.findViewById(R.id.recyclerCharacters)
-        val decoration = DividerItemDecoration(context, DividerItemDecoration.VERTICAL)
-        recycler.addItemDecoration(decoration)
+        initRecycler(view)
+        initSearchEditText(view)
 
-        val layoutManager = LinearLayoutManager(context)
-        layoutManager.orientation = RecyclerView.VERTICAL
-        recycler.layoutManager = layoutManager
-
-        // Loading dialog
         val loadingDialog: LoadingDialog? = context?.let { LoadingDialog(it) }
 
 
-        recycler.adapter = adapter
         model.characterList.observe(this, Observer<PagedList<CharacterDatabase>> {
             Log.d("CharactersListFragment", "list size: ${it?.size}")
             adapter.submitList(it)
@@ -70,28 +66,60 @@ class CharactersListFragment : Fragment(), CharacterViewHolder.OnAdapterInteract
 
 
 
+    }
+
+    /**
+     * Initialize Character List RecyclerView
+     */
+    private fun initRecycler(view: View){
+        val recycler: RecyclerView = view.findViewById(R.id.recyclerCharacters)
+        val decoration = DividerItemDecoration(context, DividerItemDecoration.VERTICAL)
+        recycler.addItemDecoration(decoration)
+
+        val layoutManager = LinearLayoutManager(context)
+        layoutManager.orientation = RecyclerView.VERTICAL
+        recycler.layoutManager = layoutManager
+        recycler.adapter = adapter
+    }
+
+    /**
+     * Initialize Search EditText and set OnKeyPressed listeners.
+     */
+    private fun initSearchEditText(view: View){
         val etName: EditText = view.findViewById(R.id.etName)
         etName.setOnKeyListener { _, keyCode, event ->
             if(keyCode == KeyEvent.KEYCODE_ENTER && event.action == KeyEvent.ACTION_DOWN){
-                if(etName.text.isNotEmpty()){
-                    model.searchCharacters(etName.text.toString())
-                    adapter.submitList(null)
-                }
+                searchCharacter(etName.text)
             }
             false
         }
 
         etName.setOnEditorActionListener { _, actionId, _ ->
             if(actionId == EditorInfo.IME_ACTION_GO){
-                if(etName.text.isNotEmpty()){
-                    model.searchCharacters(etName.text.toString())
-                    adapter.submitList(null)
-                }
+                searchCharacter(etName.text)
             }
             false
         }
     }
 
+    /**
+     * Calls the ViewModel to search by character name.
+     * If EditText is empty, query null character name to search all characters.
+     *
+     * @property text Editable with the text on the Search EditText to check if it's empty.
+     */
+    private fun searchCharacter(text: Editable){
+        if(text.isNotEmpty())
+            model.searchCharacters(text.toString())
+        else
+            model.searchCharacters(null)
+
+        adapter.submitList(null)
+    }
+
+    /**
+     * Interface method implementation. Called from the adapter when an item is clicked.
+     */
     override fun onItemClicked(id: Int) {
         activity?.let {
             val action = CharactersListFragmentDirections.actionCharactersListFragmentToCharacterDetailsFragment(id)

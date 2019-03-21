@@ -1,4 +1,4 @@
-package dev.carrion.marvelheroes.network
+package dev.carrion.marvelheroes.data.network
 
 import android.util.Log
 import dev.carrion.marvelheroes.md5
@@ -14,6 +14,15 @@ import retrofit2.http.GET
 import retrofit2.http.Query
 import java.util.concurrent.TimeUnit
 
+/**
+ * Top level function to fetch characters on the remote source.
+ * @property api MarvelApi instance.
+ * @property name Name for the character we want to search.
+ * @property initial Number offset for the Marvel API.
+ * @property itemsPerPage Limit number for the Marvel API.
+ * @property onSuccess Function called when the response from the remote source is successful.
+ * @property onError Function called when the response from the remote source is an error.
+ */
 fun fetchCharacters(api: MarvelApi,
                     name: String?,
                     initial: Int,
@@ -51,6 +60,9 @@ fun fetchCharacters(api: MarvelApi,
     )
 }
 
+/**
+ * Interface to declare the api calls.
+ */
 interface MarvelApi {
 
     @GET("/v1/public/characters")
@@ -63,11 +75,16 @@ interface MarvelApi {
         @Query("hash") hash: String
     ): Call<CharacterDataWrapper>
 
+
     companion object {
         private const val BASE_URL = "https://gateway.marvel.com:443"
         const val API_KEY = "c8b6726d809730fa88a136229ebec54e"
         const val PRIVATE_KEY = "4677b77f88c31da6db69b41345b61aba3246a92a"
 
+        /**
+         * Create a MarvelApi instance.
+         * @return MarvelApi instance.
+         */
         fun create(): MarvelApi {
             val logger = HttpLoggingInterceptor()
             logger.level = HttpLoggingInterceptor.Level.BASIC

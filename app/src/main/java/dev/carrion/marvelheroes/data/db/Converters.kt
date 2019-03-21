@@ -1,8 +1,11 @@
-package dev.carrion.marvelheroes.db
+package dev.carrion.marvelheroes.data.db
 
 import androidx.room.TypeConverter
 import dev.carrion.marvelheroes.models.Image
 
+/**
+ * Converters for room database.
+ */
 class Converters {
 
     @TypeConverter

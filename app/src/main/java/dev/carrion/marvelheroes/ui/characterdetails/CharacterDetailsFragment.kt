@@ -1,4 +1,4 @@
-package dev.carrion.marvelheroes.characterdetails
+package dev.carrion.marvelheroes.ui.characterdetails
 
 import android.os.Bundle
 import android.util.Log
@@ -17,11 +17,18 @@ import dev.carrion.marvelheroes.R
 import kotlinx.android.synthetic.main.activity_main.*
 import org.koin.android.ext.android.setProperty
 import org.koin.android.viewmodel.ext.android.getViewModel
-import org.w3c.dom.Text
 
+
+/**
+ * Character Details Fragment
+ *
+ * This class has the logic of the CharacterDetailsFragment
+ *
+ * @author Ignacio Carrión
+ */
 class CharacterDetailsFragment : Fragment() {
 
-    val args: CharacterDetailsFragmentArgs by navArgs()
+    private val args: CharacterDetailsFragmentArgs by navArgs()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.fragment_character_details, container, false)
@@ -49,13 +56,22 @@ class CharacterDetailsFragment : Fragment() {
                 .into(imgThumbnail)
         })
 
+        initViewPager(view)
 
+    }
+
+
+    /**
+     * Initialize ViewPager.
+     *
+     * @property view Fragment View.
+     */
+    private fun initViewPager(view: View){
         val tabLayout = view.findViewById<TabLayout>(R.id.tabLayout)
         val viewPager = view.findViewById<ViewPager>(R.id.viewPager)
         val adapter = MarvelPagerAdapter(childFragmentManager, tabLayout, args.id)
         viewPager.adapter = adapter
 
         tabLayout.setupWithViewPager(viewPager)
-
     }
 }

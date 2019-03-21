@@ -1,4 +1,4 @@
-package dev.carrion.marvelheroes.characterdetails.eventslist
+package dev.carrion.marvelheroes.ui.characterdetails.eventslist
 
 import android.os.Bundle
 import android.util.Log
@@ -15,9 +15,16 @@ import dev.carrion.marvelheroes.R
 import org.koin.android.ext.android.setProperty
 import org.koin.android.viewmodel.ext.android.getViewModel
 
+/**
+ * Event List Fragment
+ *
+ * This class has the logic of the EventListFragment
+ *
+ */
 class EventListFragment : Fragment() {
 
-    var tabLayout: TabLayout? = null
+    private var tabLayout: TabLayout? = null
+    private val adapter = EventAdapter()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.fragment_events_list, container, false)
@@ -29,15 +36,7 @@ class EventListFragment : Fragment() {
         setProperty("id", id)
         val viewModel = getViewModel<EventListViewModel>()
 
-        val manager = LinearLayoutManager(context)
-        manager.orientation = RecyclerView.VERTICAL
-        val adapter = EventAdapter()
-        val eventRecycler: RecyclerView = view.findViewById(R.id.eventRecycler)
-        eventRecycler.adapter = adapter
-        eventRecycler.layoutManager = manager
-
-        val decoration = DividerItemDecoration(context, DividerItemDecoration.VERTICAL)
-        eventRecycler.addItemDecoration(decoration)
+        initRecycler(view)
 
         viewModel.eventList.observe(this, Observer {
             Log.d("ComicListFragment", "Comic List Size: ${it.size}, CharacterId: $id")
@@ -49,7 +48,31 @@ class EventListFragment : Fragment() {
 
     }
 
+    /**
+     * Initialize the Events RecyclerView
+     *
+     * @property view Fragment View.
+     */
+    private fun initRecycler(view: View){
+        val manager = LinearLayoutManager(context)
+        manager.orientation = RecyclerView.VERTICAL
+        val eventRecycler: RecyclerView = view.findViewById(R.id.eventRecycler)
+        eventRecycler.adapter = adapter
+        eventRecycler.layoutManager = manager
+
+        val decoration = DividerItemDecoration(context, DividerItemDecoration.VERTICAL)
+        eventRecycler.addItemDecoration(decoration)
+    }
+
     companion object {
+
+        /**
+         * Creates new Instance of this fragment.
+         *
+         * @property args Bundle with arguments for this fragment.
+         * @property tabLayout TabLayout View to add to the title the number of comics available.
+         * @return EventListFragment instance.
+         */
         fun newInstance(args: Bundle?, tabLayout: TabLayout): EventListFragment {
             val fragment = EventListFragment()
             args?.let {

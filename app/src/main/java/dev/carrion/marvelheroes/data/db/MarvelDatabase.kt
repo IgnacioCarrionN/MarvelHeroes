@@ -1,4 +1,4 @@
-package dev.carrion.marvelheroes.db
+package dev.carrion.marvelheroes.data.db
 
 import android.content.Context
 import androidx.room.*
@@ -6,6 +6,12 @@ import dev.carrion.marvelheroes.models.CharacterDatabase
 import dev.carrion.marvelheroes.models.ComicSummary
 import dev.carrion.marvelheroes.models.EventSummary
 
+/**
+ * Marvel Database
+ *
+ * This class handles the logic to create database singletons
+ *
+ */
 @Database(entities = [CharacterDatabase::class, ComicSummary::class, EventSummary::class], version = 4, exportSchema = false)
 @TypeConverters(Converters::class)
 abstract class MarvelDatabase  : RoomDatabase(){

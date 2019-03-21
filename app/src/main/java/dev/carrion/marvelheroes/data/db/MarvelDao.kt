@@ -1,13 +1,15 @@
-package dev.carrion.marvelheroes.db
+package dev.carrion.marvelheroes.data.db
 
 import androidx.lifecycle.LiveData
 import androidx.paging.DataSource
 import androidx.room.*
-import dev.carrion.marvelheroes.models.Character
 import dev.carrion.marvelheroes.models.CharacterDatabase
 import dev.carrion.marvelheroes.models.ComicSummary
 import dev.carrion.marvelheroes.models.EventSummary
 
+/**
+ * Marvel Dao
+ */
 @Dao
 interface MarvelDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
