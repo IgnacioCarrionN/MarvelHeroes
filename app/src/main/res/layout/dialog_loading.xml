@@ -11,6 +11,6 @@
     <TextView
             android:text="@string/loading"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" android:id="@+id/textView" android:gravity="center"
+            android:layout_height="match_parent" android:id="@+id/txtLoading" android:gravity="center"
             android:layout_marginBottom="32dp" android:layout_marginLeft="24dp" android:layout_marginRight="24dp"/>
 </LinearLayout>

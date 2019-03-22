@@ -49,11 +49,12 @@ class CharacterDetailsFragment : Fragment() {
         viewModel.character.observe(this, Observer {
             txtName.text = it.name
             txtDescription.text = it.description
-
-            GlideApp.with(fragment)
-                .load(it.thumbnail.path)
-                .fitCenter()
-                .into(imgThumbnail)
+            if(!it.thumbnail.path.contains("image_not_available")){
+                GlideApp.with(fragment)
+                    .load(it.thumbnail.path)
+                    .fitCenter()
+                    .into(imgThumbnail)
+            }
         })
 
         initViewPager(view)

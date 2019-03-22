@@ -83,10 +83,12 @@ class CharacterViewHolder(private val view: View, private val handler: OnAdapter
 
             this.character = character
 
-            GlideApp.with(view)
-                .load(character.thumbnail.path)
-                .fitCenter()
-                .into(thumbnail)
+            if(!character.thumbnail.path.contains("image_not_available")){
+                GlideApp.with(view)
+                    .load(character.thumbnail.path)
+                    .fitCenter()
+                    .into(thumbnail)
+            }
 
             name.text = character.name
             description.text = character.description

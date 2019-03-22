@@ -36,6 +36,8 @@ class CharactersListViewModel(private val repository: MarvelRepository) : ViewMo
 
     val loading: LiveData<Boolean> = Transformations.switchMap(characterResult) { it.loading }
 
+    val attributionText: LiveData<String> = Transformations.switchMap(characterResult) { it.attributionText }
+
     /**
      * When ViewModel it's created we search for null name to query all characters.
      */

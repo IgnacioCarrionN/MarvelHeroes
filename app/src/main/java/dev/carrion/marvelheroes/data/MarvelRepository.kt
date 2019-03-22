@@ -41,6 +41,7 @@ class MarvelRepository(
         val boundaryCallback = MarvelCallback(name, marvelApi, cache)
         val networkErrors = boundaryCallback.networkErrors
         val loading = boundaryCallback.loading
+        val attributionText = boundaryCallback.attributionText
 
         val pagedListConfig = createPagedConfig()
 
@@ -48,7 +49,7 @@ class MarvelRepository(
             .setBoundaryCallback(boundaryCallback)
             .build()
 
-        return CharacterSearchResult(data, networkErrors, loading)
+        return CharacterSearchResult(data, networkErrors, loading, attributionText)
     }
 
     /**

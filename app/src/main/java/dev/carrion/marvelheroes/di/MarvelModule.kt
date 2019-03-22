@@ -1,5 +1,6 @@
 package dev.carrion.marvelheroes.di
 
+import dev.carrion.marvelheroes.data.MarvelCallback
 import dev.carrion.marvelheroes.ui.mainlist.CharactersListViewModel
 import dev.carrion.marvelheroes.ui.characterdetails.CharacterDetailsViewModel
 import dev.carrion.marvelheroes.ui.characterdetails.comicslist.ComicListViewModel
@@ -27,6 +28,8 @@ val MarvelModule = module {
     single { MarvelLocalCache(get())}
 
     single { MarvelRepository(get(), get()) }
+
+    factory { MarvelCallback(getProperty("name"),get(),get())}
 
 
     viewModel { CharactersListViewModel(get()) }

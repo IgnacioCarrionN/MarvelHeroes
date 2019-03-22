@@ -1,6 +1,7 @@
 package dev.carrion.marvelheroes.data
 
 import android.util.Log
+import androidx.annotation.VisibleForTesting
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.paging.PagedList
@@ -30,6 +31,7 @@ class MarvelCallback(private val name: String?,
     private var isRequestInProgress = false
 
     val loading: MutableLiveData<Boolean> = MutableLiveData()
+    val attributionText: MutableLiveData<String> = MutableLiveData()
 
     private val _networkErrors = MutableLiveData<String>()
 
@@ -63,6 +65,7 @@ class MarvelCallback(private val name: String?,
             cache.insertCharacters(charactersDatabase) {
                 saveComicsAndEvents(characterDataWrapper.data.results)
                 loading.postValue(false)
+                attributionText.postValue(characterDataWrapper.attributionText)
             }
         }, { error ->
             Log.d("MarvelDataSource", error)
@@ -85,6 +88,15 @@ class MarvelCallback(private val name: String?,
             charactersDatabase.add(CharacterDatabase.fromCharacter(it))
         }
         return charactersDatabase
+    }
+
+
+    /**
+     * Public call to above method visible only for testing purposes.
+     */
+    @VisibleForTesting
+    fun characterListToDatabaseListTesting(characters: List<Character>): List<CharacterDatabase> {
+        return characterListToDatabaseList(characters)
     }
 
 

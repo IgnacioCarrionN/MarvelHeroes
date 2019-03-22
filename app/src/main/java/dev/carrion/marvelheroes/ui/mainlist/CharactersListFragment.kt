@@ -9,6 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import android.widget.EditText
+import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
@@ -46,7 +47,7 @@ class CharactersListFragment : Fragment(), CharacterViewHolder.OnAdapterInteract
         initSearchEditText(view)
 
         val loadingDialog: LoadingDialog? = context?.let { LoadingDialog(it) }
-
+        val txtAttribution: TextView = view.findViewById(R.id.txtAttribution)
 
         model.characterList.observe(this, Observer<PagedList<CharacterDatabase>> {
             Log.d("CharactersListFragment", "list size: ${it?.size}")
@@ -64,6 +65,9 @@ class CharactersListFragment : Fragment(), CharacterViewHolder.OnAdapterInteract
                 loadingDialog?.hideDialog()
         })
 
+        model.attributionText.observe(this, Observer {
+            txtAttribution.text = it
+        })
 
 
     }
