@@ -12,6 +12,7 @@ import dev.carrion.marvelheroes.models.ComicSummary
 import dev.carrion.marvelheroes.models.EventSummary
 import dev.carrion.marvelheroes.data.network.MarvelApi
 import dev.carrion.marvelheroes.data.network.fetchCharacters
+import dev.carrion.marvelheroes.toCharacterDatabaseList
 
 /**
  * Marvel Callback
@@ -61,7 +62,7 @@ class MarvelCallback(private val name: String?,
         val startPosition = lastRequestedPage * NETWORK_PAGE_SIZE
 
         fetchCharacters(api, name, startPosition, NETWORK_PAGE_SIZE, { characterDataWrapper ->
-            val charactersDatabase = characterListToDatabaseList(characterDataWrapper.data.results)
+            val charactersDatabase = characterDataWrapper.data.results.toCharacterDatabaseList()
             cache.insertCharacters(charactersDatabase) {
                 saveComicsAndEvents(characterDataWrapper.data.results)
                 loading.postValue(false)
@@ -74,29 +75,6 @@ class MarvelCallback(private val name: String?,
             _networkErrors.postValue(error)
             requestAndSaveData(name)
         })
-    }
-
-    /**
-     * Converts from JSON Character to CharacterDatabase.
-     *
-     * @property characters List of Characters from JSON conversion.
-     * @return List of characters with DB model.
-     */
-    private fun characterListToDatabaseList(characters: List<Character>): List<CharacterDatabase> {
-        val charactersDatabase = mutableListOf<CharacterDatabase>()
-        characters.forEach {
-            charactersDatabase.add(CharacterDatabase.fromCharacter(it))
-        }
-        return charactersDatabase
-    }
-
-
-    /**
-     * Public call to above method visible only for testing purposes.
-     */
-    @VisibleForTesting
-    fun characterListToDatabaseListTesting(characters: List<Character>): List<CharacterDatabase> {
-        return characterListToDatabaseList(characters)
     }
 
 

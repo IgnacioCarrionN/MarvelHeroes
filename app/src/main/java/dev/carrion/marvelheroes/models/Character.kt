@@ -3,6 +3,7 @@ package dev.carrion.marvelheroes.models
 import androidx.room.Entity
 import androidx.room.Ignore
 import androidx.room.PrimaryKey
+import kotlin.random.Random
 
 /**
  * File keeps character related models on the same place.
@@ -48,7 +49,13 @@ data class Character(
     val stories: StoriesList,
     val events: EventList,
     val series: SeriesList
-)
+){
+    /**
+     * Converts Character from Marvel API to a CharacterDatabase object.
+     */
+    fun toCharacterDatabase(): CharacterDatabase =
+        CharacterDatabase(id, name, description, modified, resourceURI, thumbnail)
+}
 /**
  * Url and Image model from Marvel API.
  */
@@ -67,12 +74,4 @@ data class CharacterDatabase(
     val modified: String,
     val resourceURI: String,
     val thumbnail: Image
-){
-    companion object {
-        /**
-         * Converts Character from Marvel API to a CharacterDatabase object.
-         */
-        fun fromCharacter(c: Character): CharacterDatabase =
-            CharacterDatabase(c.id, c.name, c.description, c.modified, c.resourceURI, c.thumbnail)
-    }
-}
+)

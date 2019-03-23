@@ -1,5 +1,7 @@
 package dev.carrion.marvelheroes
 
+import dev.carrion.marvelheroes.models.Character
+import dev.carrion.marvelheroes.models.CharacterDatabase
 import java.security.MessageDigest
 
 /**
@@ -18,4 +20,18 @@ fun String.md5(): String {
     return digest.joinToString("") {
         String.format("%02x", it)
     }
+}
+
+/**
+ * Converts from JSON Character to CharacterDatabase.
+ *
+ * @receiver List of Characters from JSON parse.
+ * @return List of characters with DB model.
+ */
+fun List<Character>.toCharacterDatabaseList(): List<CharacterDatabase> {
+    val charactersDatabase = mutableListOf<CharacterDatabase>()
+    this.forEach {
+        charactersDatabase.add(it.toCharacterDatabase())
+    }
+    return charactersDatabase
 }
