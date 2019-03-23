@@ -2,6 +2,8 @@ package dev.carrion.marvelheroes
 
 import dev.carrion.marvelheroes.models.Character
 import dev.carrion.marvelheroes.models.CharacterDatabase
+import dev.carrion.marvelheroes.models.ComicSummary
+import dev.carrion.marvelheroes.models.EventSummary
 import java.security.MessageDigest
 
 /**
@@ -34,4 +36,30 @@ fun List<Character>.toCharacterDatabaseList(): List<CharacterDatabase> {
         charactersDatabase.add(it.toCharacterDatabase())
     }
     return charactersDatabase
+}
+
+/**
+ * Create new ComicSummary objects with CharacterId from Character JSON list.
+ * @receiver List of ComicSummary without character ids.
+ * @property characterId CharacterId to use as foreign key on DB.
+ */
+fun List<ComicSummary>.getComicListWithId(characterId: Int): List<ComicSummary> {
+    val comicsWithId = mutableListOf<ComicSummary>()
+    this.forEach {
+        comicsWithId.add(it.getComicWithCharacterId(characterId))
+    }
+    return comicsWithId
+}
+
+/**
+ * Create new EventSummary objects with CharacterId from Character JSON list.
+ * @receiver List of EventSummary without character ids.
+ * @property characterId CharacterId to use as foreign key on DB.
+ */
+fun List<EventSummary>.getEventListWithId(characterId: Int): List<EventSummary> {
+    val eventsWithId = mutableListOf<EventSummary>()
+    this.forEach {
+        eventsWithId.add(it.getEventWithCharacterId(characterId))
+    }
+    return eventsWithId
 }

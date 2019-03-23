@@ -1,17 +1,16 @@
 package dev.carrion.marvelheroes.data
 
 import android.util.Log
-import androidx.annotation.VisibleForTesting
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.paging.PagedList
 import dev.carrion.marvelheroes.data.db.MarvelLocalCache
 import dev.carrion.marvelheroes.models.Character
 import dev.carrion.marvelheroes.models.CharacterDatabase
-import dev.carrion.marvelheroes.models.ComicSummary
-import dev.carrion.marvelheroes.models.EventSummary
 import dev.carrion.marvelheroes.data.network.MarvelApi
 import dev.carrion.marvelheroes.data.network.fetchCharacters
+import dev.carrion.marvelheroes.getComicListWithId
+import dev.carrion.marvelheroes.getEventListWithId
 import dev.carrion.marvelheroes.toCharacterDatabaseList
 
 /**
@@ -84,44 +83,13 @@ class MarvelCallback(private val name: String?,
      */
     private fun saveComicsAndEvents(characters: List<Character>){
         characters.forEach {
-            cache.insertComics(getComicListWithId(it.comics.items, it.id)){}
-            cache.insertEvents(getEventListWithId(it.events.items, it.id)){}
+            cache.insertComics(it.comics.items.getComicListWithId(it.id)){}
+            cache.insertEvents(it.events.items.getEventListWithId(it.id)){}
         }
         lastRequestedPage++
         isRequestInProgress = false
     }
 
-    /**
-     * Create new ComicSummary objects with CharacterId from Character JSON list.
-     * @property comics List of ComicSummary without character ids.
-     * @property characterId CharacterId to use as foreign key on DB.
-     */
-    private fun getComicListWithId(comics: List<ComicSummary>, characterId: Int): List<ComicSummary> {
-        val comicsWithId = mutableListOf<ComicSummary>()
-        comics.forEach {
-            comicsWithId.add(setComicCharacterId(it, characterId))
-        }
-        return comicsWithId
-    }
-
-    private fun setComicCharacterId(comic: ComicSummary, characterId: Int): ComicSummary =
-        ComicSummary(0, comic.resourceURI, comic.name, characterId)
-
-    /**
-     * Create new EventSummary objects with CharacterId from Character JSON list.
-     * @property events List of EventSummary without character ids.
-     * @property characterId CharacterId to use as foreign key on DB.
-     */
-    private fun getEventListWithId(events: List<EventSummary>, characterId: Int): List<EventSummary> {
-        val eventsWithId = mutableListOf<EventSummary>()
-        events.forEach {
-            eventsWithId.add(setEventCharacterId(it, characterId))
-        }
-        return eventsWithId
-    }
-
-    private fun setEventCharacterId(event: EventSummary, characterId: Int): EventSummary =
-        EventSummary(0, event.resourceURI, event.name, characterId)
 
     companion object {
         private const val NETWORK_PAGE_SIZE = 50

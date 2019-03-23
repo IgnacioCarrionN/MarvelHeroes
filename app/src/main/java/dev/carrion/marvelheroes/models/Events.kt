@@ -26,4 +26,7 @@ data class EventSummary(
     val resourceURI: String,
     val name: String,
     val characterId: Int
-)
+) {
+    fun getEventWithCharacterId(id: Int): EventSummary =
+        EventSummary(0, resourceURI, name, id)
+}

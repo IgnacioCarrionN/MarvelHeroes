@@ -24,4 +24,7 @@ data class ComicSummary(
     val resourceURI: String,
     val name: String,
     val characterId: Int
-)
+) {
+    fun getComicWithCharacterId(characterId: Int): ComicSummary =
+        ComicSummary(0, resourceURI, name, characterId)
+}
